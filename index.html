@@ -497,10 +497,11 @@ window.doLogout = async () => {
 // Load transactions (realtime)
 function loadTransactions() {
   if (unsubscribe) unsubscribe();
-  const q = query(collection(db, 'transactions'), where('uid','==',currentUser.uid), orderBy('createdAt','desc'));
+  const q = query(collection(db, 'transactions'), where('uid','==',currentUser.uid));
   unsubscribe = onSnapshot(q, (snap) => {
     const txs = [];
     snap.forEach(d => txs.push({id: d.id, ...d.data()}));
+    txs.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
     renderAll(txs);
   });
 }
